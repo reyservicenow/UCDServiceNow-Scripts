@@ -1,0 +1,4 @@
+Defects
+-If user is Guest, e-mail is not going out. likely because the business rule to update e-mail address is running after the creation of hte incident in the first place
+-if type is status update, then only work notes is sent to record, description does nothing (so this is different expectation to if type is incident where we know it will reach customer)
+-

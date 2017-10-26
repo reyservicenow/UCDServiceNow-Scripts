@@ -22,14 +22,11 @@ function hasSupportGroupCallback(caller) {
 		
         var group = new GlideRecord('sys_user_group');
 		group.addQuery('sys_id', caller.u_primary_support_group);
-		group.query(getSupportGroupCallback);
+        group.query();
+        if (group.next()) {
+            // If the query returned a valid gliderecord, show the group's name under the caller_id field
+            g_form.setValue('u_supported_by', group.sys_id, [group.name]);
+        }
     }
 	return;
-}
-
-function getSupportGroupCallback(group) {
-	if (group.next()) { 
-		// If the query returned a valid gliderecord, show the group's name under the caller_id field
-			g_form.setValue('u_supported_by', group.sys_id, [group.name]);
-	}
 }
