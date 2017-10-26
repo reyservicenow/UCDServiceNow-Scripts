@@ -1,4 +1,21 @@
-Defects
--If user is Guest, e-mail is not going out. likely because the business rule to update e-mail address is running after the creation of hte incident in the first place
--if type is status update, then only work notes is sent to record, description does nothing (so this is different expectation to if type is incident where we know it will reach customer)
--
+Defect: If user is Guest, e-mail is not going out. 
+Fix: The business rule to update guest e-mail address is running after the creation of the incident in the first place. We would want to change the order of business rule "Update INC 'Emailed From' if Guest" to same as "CallTypeChanged", or to be 100% sure, move the code in "Update INC 'Emailed From' if Guest" to "CallTypeChanged" entirely.
+
+Defect: If call_type is status update, then only work notes is sent to record, description does nothing 
+Fix: Not necessarily a defect but this would be different "expected" behavior because call_type=incident sends description to the caller in a notification. I'd suggest adding an info message to clarify to the user what to expect.
+
+Bug: Several business rules no longer do anything because one of the associated call_type choices was deleted to meet MVP standards
+Fix: Deactivate the following business rules (none of these are needed for the MVP of phone call to incident only) to ensure they are not causing unintended behavior:
+-Insert clean REQ and RITM 
+-Transfer Call notes to RITM
+-CallType request transfer Short Desc
+-Replace REQ with RITM
+-Transfer call record to RITM
+
+Presented Defect: When a technician wants to create an incident from a call but also resolve it immediately, it will send two emails immediately.
+Potential Fix 1: Per Kevin's idea, add a "suppress initial notification" checkbox that the technician would mark as true on the call. Would need to add "call.suppress is not true" condition to the notification on the incident table.
+-Pros: easy customization to implement
+-Cons: Technician has two forms to get through for immediately-resolved incidents
+Potential Fix 2: Add the fields necessary to resolve an incident (category, subcategory, configuration item, assigned to, resolution code) to the call form that the technician would fill out to be able to move the incident directly to resolved, which would skip the initial incident email.
+-Pros: Technician never has to leave the call form, making call recording much more efficient
+-Cons: more customization to the call module
