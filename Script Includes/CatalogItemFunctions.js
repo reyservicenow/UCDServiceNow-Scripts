@@ -381,5 +381,35 @@ CatalogItemFunctions.prototype = Object.extendsObject(AbstractAjaxProcessor, {
 
 		return answer;
 	},
+	/**
+* Gets a user information from a provided list
+* Returns a text string of names, deapartments, affiliations, and cost centers
+*/
+	GetNomineeInfo: function () {
+		var textField = '';
+		var nomList = this.getParameter('sysparm_nominee_list');
+		var array = [];
+		array = nomList.split(',');
+
+		for (var i = 0; i < array.length; i++) {
+			var newGR = new GlideRecord('sys_user');
+			newGR.addQuery('sys_id', array[i]);
+			newGR.query();
+			if (newGR.next()) {
+				textField += newGR.name + ': ';
+				if (newGR.department) {
+					textField += 'Department: ' + newGR.department.getDisplayValue() + '. ';
+				}
+				if (newGR.u_affiliation) {
+					textField += 'Affilitation: ' + newGR.u_affiliation.getDisplayValue() + '. ';
+				}
+				if (newGR.cost_center) {
+					textField += 'Cost Center: ' + newGR.cost_center.getDisplayValue();
+				}
+				textField += '\n';
+			}
+		}
+		return textField;
+	},
 	type: 'CatalogItemFunctions'
 });
