@@ -382,15 +382,16 @@ CatalogItemFunctions.prototype = Object.extendsObject(AbstractAjaxProcessor, {
 		return answer;
 	},
 	/**
-* Gets a user information from a provided list
-* Returns a text string of names, deapartments, affiliations, and cost centers
-*/
+    * Gets a user information from a provided list
+    * Returns a text string of names, deapartments, affiliations, and cost centers
+    */
 	GetNomineeInfo: function () {
 		var textField = '';
 		var nomList = this.getParameter('sysparm_nominee_list');
 		var array = [];
-		array = nomList.split(',');
+		array = nomList.split(','); //split the list into an array
 
+        //for every person, grab their information and push it into a single text string
 		for (var i = 0; i < array.length; i++) {
 			var newGR = new GlideRecord('sys_user');
 			newGR.addQuery('sys_id', array[i]);
@@ -410,6 +411,43 @@ CatalogItemFunctions.prototype = Object.extendsObject(AbstractAjaxProcessor, {
 			}
 		}
 		return textField;
+	},
+    /**
+    * Gets Previous values for RITM: Employee Recognition: SPOT Award
+    * Returns a text string of names, deapartments, affiliations, and cost centers
+    */
+	GetPreviousRITMspot: function () {
+	    var results = {}; //create an object
+
+	    var u_nominees2 = [];
+	    var u_department_manager2 = "";
+	    var u_director2 = "";
+	    var u_justification2 = "";
+	    var additional_info2 = "";
+
+	    var ritmReference2 = this.getParameter('sysparm_ref');
+
+	    var newGR = new GlideRecord('sc_req_item'); //find the old RITM
+	    newGR.addQuery('sys_id', ritmReference2);
+	    newGR.query();
+
+        //push all the old values into the object
+	    if (newGR.next()) {
+	        u_nominees2 = newGR.variables.u_nominees.toString();
+	        u_department_manager2 = newGR.variables.u_department_manager.toString();
+	        u_director2 = newGR.variables.u_director.toString();
+	        u_justification2 = newGR.variables.u_justification.toString();
+	        additional_info2 = newGR.variables.additional_info.toString();
+
+	        results.u_nominees = u_nominees2;
+	        results.u_department_manager = u_department_manager2;
+	        results.u_director = u_director2;
+	        results.u_justification = u_justification2;
+	        results.additional_info = additional_info2;
+	    }
+	    results = new JSON().encode(results);
+	    
+	    return results;
 	},
 	type: 'CatalogItemFunctions'
 });
