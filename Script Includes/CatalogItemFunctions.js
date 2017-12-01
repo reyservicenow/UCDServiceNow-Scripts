@@ -449,5 +449,15 @@ CatalogItemFunctions.prototype = Object.extendsObject(AbstractAjaxProcessor, {
 	    
 	    return results;
 	},
+    /**
+    * Gets the instance URL for the resubmit UI Action
+    * Returns a text string of a URL
+    */
+	GetResubmitURL: function () {
+	    var answer = "";
+	    var catItem = this.getParameter('sysparm_ref');
+	    answer = gs.getProperty('glide.servlet.uri') + "servicehub?id=sc_cat_item&sys_id=" + catItem + "&sysparm_ref=";
+	    return answer;
+	},
 	type: 'CatalogItemFunctions'
 });
