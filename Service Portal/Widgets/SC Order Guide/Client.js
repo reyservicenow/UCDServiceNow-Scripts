@@ -1,4 +1,4 @@
-function ($scope, $http, nowServer, $timeout, spUtil) {
+function ($scope, $http, nowServer, $timeout, spUtil, $anchorScroll, $location) {
     $scope.m = $scope.data.msgs;
     $scope.evaluatingIncludes = false;
     // field changed event comes from glideFormFactory
@@ -30,6 +30,18 @@ function ($scope, $http, nowServer, $timeout, spUtil) {
 
     $scope.scrollToVar = function (v) {
         spUtil.scrollTo("#" + v.sys_id);
+    }
+
+    $scope.gotoTop = function (item) {
+        var newHash = "top";
+        $location.hash(newHash);
+        $anchorScroll();
+    }
+
+    $scope.gotoAnchor = function (item) {
+        var newHash = item.sys_id;
+        $location.hash(newHash);
+        $anchorScroll();
     }
 
     // Breadcrumbs
@@ -128,12 +140,14 @@ function ($scope, $http, nowServer, $timeout, spUtil) {
         $scope.submitting = true;
         setFieldsReadonly();
         $http.post(spUtil.getURL('sc_cat_item_guide'), { "items": $scope.included, "sc_cat_item_guide": $scope.data.sys_id }).success(function (response) {
-            var a = response.answer;
+            var a = response.result ? response.result : response.answer;
             var n = a.number;
             $scope.$emit("$$uiNotification", response.$$uiNotification);
             $scope.$emit("$sp.sc_order_guide.submitted", a);
-            if (n)
-                issueMessage(n, a.table, a.sys_id);
+            if (n) // redirect to my stuff page
+                issueMessage(n, a.table, a.sys_id, a.redirect_to, '/servicehub/?id=ucd_my_stuff');
+
+            //issueMessage(n, a.table, a.sys_id, a.redirect_to, a.redirect_portal_url);
             $scope.submitting = false;
             $scope.submitButtonMsg = $scope.m.submittedMsg;
         })
@@ -172,12 +186,23 @@ function ($scope, $http, nowServer, $timeout, spUtil) {
         return $scope.flatMandatory.length;
     }
 
-    function issueMessage(n, table, sys_id) {
+    function issueMessage(n, table, sys_id, redirectTo, redirectUrl) {
         var page = table == 'sc_request' ? 'sc_request' : 'ticket';
+        if (c.options.page) { page = c.options.page; }
+        if (c.options.table) { table = c.options.table; }
+        if (redirectTo == 'catalog_home') page = 'sc_home';
+        var url = spUtil.format(c.options.url, { page: page, table: table, sys_id: sys_id });
+        if (c.options.auto_redirect == "true") {
+            if (redirectUrl)
+                $window.location.href = redirectUrl;
+            else
+                $window.location.href = url;
+            return;
+        }
+
         var t = $scope.m.createdMsg + " " + n + " - ";
         t += $scope.m.trackMsg;
-        t += ' <a href="?id=' + page + '&table=' + table + '&sys_id=' +
-            sys_id + '">' + $scope.m.clickMsg + '</a>';
+        t += ' <a href="' + url + '">' + $scope.m.clickMsg + '</a>';
         spUtil.addInfoMessage(t);
     }
 
@@ -223,6 +248,7 @@ function ($scope, $http, nowServer, $timeout, spUtil) {
             $scope.evaluatingIncludes = false;
         });
     }
+
     if ($scope.data.sc_cat_item)
         $timeout(evalIncludes);
 }
