@@ -128,8 +128,11 @@ function ($scope, $http, spUtil, nowAttachmentHandler, $rootScope, $sanitize, $w
 			var n = a.number;
 			$scope.$emit("$$uiNotification", a.$$uiNotification);
 			$scope.$emit("$sp.sc_cat_item.submitted", a);
-			if (n)
-				issueMessage(n, a.table, a.sys_id, a.redirect_to, a.redirect_portal_url);
+			if (n) // redirect to my stuff page
+				issueMessage(n, a.table, a.sys_id, a.redirect_to, '/servicehub/?id=ucd_my_stuff');
+
+			//issueMessage(n, a.table, a.sys_id, a.redirect_to, a.redirect_portal_url);
+
 			$scope.submitting = false;
 			$scope.submitButtonMsg = $scope.m.submittedMsg;
 		}).error(function(response) {
@@ -204,9 +207,12 @@ function ($scope, $http, spUtil, nowAttachmentHandler, $rootScope, $sanitize, $w
 			return;
 		}
 
+		/* Removing request header message temporarily
 		var t = $scope.m.createdMsg + " " + n + " - ";
 		t += $scope.m.trackMsg;
 		t += ' <a href="' + url + '">' + $scope.m.clickMsg + '</a>';
+		*/
+		var t = "Submitted";
 		spUtil.addInfoMessage(t);
 	}
 }
