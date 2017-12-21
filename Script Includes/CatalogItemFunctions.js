@@ -459,5 +459,123 @@ CatalogItemFunctions.prototype = Object.extendsObject(AbstractAjaxProcessor, {
 	    answer = gs.getProperty('glide.servlet.uri') + "servicehub?id=sc_cat_item&sys_id=" + catItem + "&sysparm_ref=";
 	    return answer;
 	},
+    /**
+    * Gets a user information from a provided list
+    * Returns a text string of names, deapartments, affiliations, and cost centers
+    */
+	GetBillingInfo: function () {
+	    var textField = '';
+	    var billList = this.getParameter('sysparm_billing_list');
+	    var array = [];
+	    array = billList.split(','); //split the list into an array
+
+	    //for every person, grab their information and push it into a single text string
+	    for (var i = 0; i < array.length; i++) {
+	        var newGR = new GlideRecord('sys_user');
+	        newGR.addQuery('sys_id', array[i]);
+	        newGR.query();
+	        if (newGR.next()) {
+	            textField += newGR.name + ': ';
+	            if (newGR.name) {
+	                textField += 'Name: ' + newGR.name + '. ';
+	            }
+	            if (newGR.email) {
+	                textField += 'Email: ' + newGR.email + '. ';
+	            } else {
+	                textField += 'Email: Not Provided. ';
+	            }
+	            if (newGR.phone) {
+	                textField += 'Phone: ' + newGR.phone;
+	            } else {
+	                textField += 'Phone: Not Provided. ';
+	            }
+	            textField += '\n';
+	        }
+	    }
+	    return textField;
+	},
+    /**
+    * Gets Previous values for RITM: Employee Recognition: SPOT Award
+    * Returns a text string of names, deapartments, affiliations, and cost centers
+    */
+	GetPreviousRITMstar: function () {
+	    var results = {}; //create an object
+
+	    var u_nominee2 = "";
+	    var u_individual_team_award2 = "";
+	    var u_supervisor_question2 = "";
+	    var u_supervisor2 = "";
+	    var u_director2 = "";
+	    var u_justification2 = "";
+	    var additional_info2 = "";
+
+	    var ritmReference2 = this.getParameter('sysparm_ref');
+
+	    var newGR = new GlideRecord('sc_req_item'); //find the old RITM
+	    newGR.addQuery('sys_id', ritmReference2);
+	    newGR.query();
+
+	    //push all the old values into the object
+	    if (newGR.next()) {
+	        u_nominee2 = newGR.variables.u_nominee.toString();
+	        u_department_manager2 = newGR.variables.u_department_manager.toString();
+	        u_director2 = newGR.variables.u_director.toString();
+	        u_justification2 = newGR.variables.u_justification.toString();
+	        additional_info2 = newGR.variables.additional_info.toString();
+	        u_individual_team_award2 = newGR.variables.u_individual_team_award.toString();
+	        u_supervisor_question2 = newGR.variables.u_supervisor_question.toString();
+
+	        results.u_nominee = u_nominee2;
+	        results.u_department_manager = u_department_manager2;
+	        results.u_director = u_director2;
+	        results.u_justification = u_justification2;
+	        results.additional_info = additional_info2;
+	        results.u_individual_team_award = u_individual_team_award2;
+	        results.u_supervisor_question = u_supervisor_question2;
+	    }
+	    results = new JSON().encode(results);
+
+	    return results;
+	},
+    /**
+    * Get the list of systems the user has access to
+    * Returns a text string of a sys_ids
+    */
+	GetUsersSystemAccess: function () {
+	    var systemString = "";
+	    var refUser2 = this.getParameter('sysparm_ref');
+	    var newGR = new GlideRecord('u_m2m_business_services_users');
+	    newGR.orderBy('u_business_service');
+	    newGR.addQuery('u_user', refUser2);
+	    newGR.addQuery('u_state', 'Granted');
+	    newGR.query();
+
+	    while (newGR.next()) {
+	        var ciSysID = newGR.u_business_service.toString();
+	        systemString += ciSysID + ',';
+	    }
+	    return systemString;
+	},
+    /**
+    * Get llst of request details
+    * Returns a text string of details
+    */
+	GetAccessListDetails: function () {
+	    var detailsString = "";
+	    var currentCI = "";
+	    var currentList = this.getParameter('sysparm_ref');
+	    var array = currentList.split(',');
+
+	    for (var i = 0; i < array.length; i++) {
+	        var newGR = new GlideRecord('cmdb_ci_service');
+	        newGR.addQuery('sys_id', array[i]);
+	        newGR.query();
+	        newGR.next();
+	        currentCI = newGR.name;
+	        detailsString += currentCI + " access will be requested from ___.\n";
+	    }
+
+	    return detailsString;
+	},
 	type: 'CatalogItemFunctions'
 });
