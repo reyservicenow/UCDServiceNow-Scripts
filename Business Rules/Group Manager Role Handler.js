@@ -13,11 +13,11 @@
             addManagerRole(current.manager);
         }
     } else if (previous.manager && !current.manager) {
-        if (!hasManagerRole(previous.manager, previous.sys_id)) {
+        if (!hasManagerRole(previous.manager, current.sys_id)) {
             removeManagerRole(previous.manager);
         }
     } else if (previous.manager && current.manager) {
-        if (!hasManagerRole(previous.manager, previous.sys_id)) {
+        if (!hasManagerRole(previous.manager, current.sys_id)) {
             removeManagerRole(previous.manager);
         }
         if (!hasManagerRole(current.manager, current.sys_id)) {
@@ -49,9 +49,9 @@
         var newGR = new GlideRecord('sys_user_has_role');
         newGR.addQuery('user', thisManager);
         newGR.query();
-        newGR.next(); //should only be one record
-        newGR.deleteRecord();
-
+        while (newGR.next()) {
+            newGR.deleteRecord();
+        }
     }
 
 })(current, previous);
