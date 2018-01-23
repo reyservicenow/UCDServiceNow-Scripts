@@ -48,6 +48,7 @@
     function removeManagerRole(thisManager) {
         var newGR = new GlideRecord('sys_user_has_role');
         newGR.addQuery('user', thisManager);
+        newGR.addQuery('role', '4cb881120ff3c7006717590be1050e7f'); //u_group_manager sys_id
         newGR.query();
         while (newGR.next()) {
             newGR.deleteRecord();
