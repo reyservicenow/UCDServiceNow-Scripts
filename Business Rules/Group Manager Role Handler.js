@@ -27,7 +27,7 @@
 
     function hasManagerRole(thisManager, thisGroup) {
         var newGR0 = new GlideRecord('sys_user_group');
-        newGR0.addQuery('sys_id', '!=', thisGroup)
+        newGR0.addQuery('sys_id', '!=', thisGroup);
         newGR0.addQuery('manager', thisManager);
         newGR0.query();
         if (newGR0.next()) {
