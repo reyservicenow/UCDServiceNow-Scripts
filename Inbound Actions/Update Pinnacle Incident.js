@@ -3,15 +3,20 @@
     var emailBody = email.body_text.toString().split("\n");
     var incID;
     var finalComment;
-    var pinnacleComment;
+    var createdBy;
+	var preOrderNumber;
 
     parseEmail(); //finds the sys_id for the desired incident
+	
+	gs.log("Update Pinnacle Incident inbound action is updating:\nRunning Update Pinnacle Incident");
 
     var newGR = new GlideRecord('incident'); //selects the desired incident
     newGR.addQuery('sys_id', incID);
     newGR.addQuery('state', '!=', '7'); //do nothing if closed
     newGR.query();
 
+	gs.log("Update Pinnacle Incident inbound action is updating:\nRecords found: " + newGR.getRowCount() + "\nRef: " + incID);
+	
     if (newGR.next()) {
         constructComment(); //builds the comment
 
@@ -26,22 +31,24 @@
 
     function parseEmail() {
         for (var i = 0; i < emailBody.length; i++) {
-            if (emailBody[i].indexOf("Ref:") >= 0) { //look for "Ref: xxxxxxxxxxxxx"
-                incID = emailBody[i].split(":")[1].trim().slice(0, 32); //grab sys_id and make clip it to 32 chars
-            } else if (emailBody[i].indexOf("Comment(Limited):") >= 0) { //look for comment
-                pinnacleComment = emailBody[i].split(":")[1].trim();
-            }
+            if (emailBody[i].indexOf("inc_ref_sys_id:") >= 0) { //look for "inc_ref_sys_id: xxxxxxxxxxxxx"
+                incID = emailBody[i].split("inc_ref_sys_id:")[1].trim().slice(0, 32); //grab sys_id and make clip it to 32 chars
+            } else if (emailBody[i].indexOf("Created By:") >= 0) { //look for created by
+                createdBy = emailBody[i].split("Created By:")[1].trim();
+            } else if (emailBody[i].indexOf("Pinnacle Pre-Order Incident:") >= 0) { //look for pre-order #
+                preOrderNumber = emailBody[i].split("Pinnacle Pre-Order Incident:")[1].trim(); 
+			}
         }
     }
 
     function constructComment() {
         var now = new GlideDateTime();
-        finalComment = "Message received from Pinnacle " + now + " from " + email.from + "\n";
+        finalComment = "Message received from Pinnacle on " + now + " from " + createdBy + "\n";
         finalComment += "Incident number " + newGR.number;
         if (newGR.u_external_system_number) {
-            finalComment += ", pre-order number " + newGR.u_external_system_number;
+            finalComment += ", pre-order number " + preOrderNumber;
         }
-        finalComment += "\n " + pinnacleComment;
+        finalComment += "\nMessage:\n" + email.body_text;
     }
 
 })(current, event, email, logger, classifier); 
