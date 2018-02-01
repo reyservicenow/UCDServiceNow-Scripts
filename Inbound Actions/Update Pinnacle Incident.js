@@ -7,6 +7,7 @@
     var finalComment;
     var createdBy;
 	var preOrderNumber;
+    var closeIncident = false;
 
     parseEmail(); //finds the sys_id for the desired incident
 	
@@ -22,7 +23,11 @@
     if (newGR.next()) {
         constructComment(); //builds the comment
 
-        newGR.work_notes += finalComment;
+        if (closeIncident == false) {
+            newGR.work_notes += finalComment;
+        } else if (closeIncident == true) {
+            newGR.comments += finalComment;
+        }
         //email.subject + "\n\n" + email.body_text; //adds the email to the incident's work notes
         newGR.update();
         sys_email.target_table = 'incident';
@@ -39,7 +44,9 @@
                 createdBy = emailBody[i].split("Created By:")[1].trim();
             } else if (emailBody[i].indexOf("Pinnacle Pre-Order Incident:") >= 0) { //look for pre-order #
                 preOrderNumber = emailBody[i].split("Pinnacle Pre-Order Incident:")[1].trim(); 
-			}
+            } else if (emailBody[i].indexOf("Pinnacle Incident has been Closed:") >= 0) {
+                closeIncident = true;
+            }
         }
     }
 
