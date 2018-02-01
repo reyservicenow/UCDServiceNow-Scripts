@@ -57,7 +57,7 @@
                 preOrderNumber = emailBody[i].split(":")[1].trim(); 
             } else if (emailBody[i].indexOf("Pinnacle NBR:") >= 0) { //look for work order number
                 workOrderNumber = emailBody[i].split(":")[1].trim(); 
-            } else if (emailBody[i].indexOf("Pinnacle Incident has been Closed:") >= 0) { //look for Pinnacle Incident has been Closed: to see if this is a closure notification
+            } else if (emailBody[i].indexOf("Pinnacle has been Closed:") >= 0) { //look for Pinnacle Incident has been Closed: to see if this is a closure notification
                 closeIncident = true;
             }
         }
