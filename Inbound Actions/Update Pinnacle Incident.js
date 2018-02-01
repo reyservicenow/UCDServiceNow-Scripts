@@ -51,13 +51,13 @@
         for (var i = 0; i < emailBody.length; i++) {
             if (emailBody[i].indexOf("inc_ref_sys_id:") >= 0) { //look for "inc_ref_sys_id:"
                 incID = emailBody[i].split(":")[1].trim().slice(0, 32); //grab sys_id and make clip it to 32 chars
-            } else if (emailBody[i].indexOf("Created By:") >= 0) { //look for created by
+            } else if (emailBody[i].indexOf("Created By:") >= 0) { //look for Created By:
                 createdBy = emailBody[i].split(":")[1].trim();
-            } else if (emailBody[i].indexOf("Pinnacle Pre-Order NBR:") >= 0) { //look for Pinnacle Pre-Order Incident
+            } else if (emailBody[i].indexOf("Pinnacle Pre-Order NBR:") >= 0) { //look for Pinnacle Pre-Order NBR:
                 preOrderNumber = emailBody[i].split(":")[1].trim(); 
-            } else if (emailBody[i].indexOf("Pinnacle NBR:") >= 0) { //look for work order number
+            } else if (emailBody[i].indexOf("Pinnacle NBR:") >= 0) { //look for Pinnacle NBR:
                 workOrderNumber = emailBody[i].split(":")[1].trim(); 
-            } else if (emailBody[i].indexOf("Pinnacle has been Closed:") >= 0) { //look for Pinnacle Incident has been Closed: to see if this is a closure notification
+            } else if (emailBody[i].indexOf("Pinnacle has been Closed:") >= 0) { //look for Pinnacle has been Closed: to see if this is a closure notification
                 closeIncident = true;
             }
         }
