@@ -34,7 +34,7 @@
 
         //if in the email it said Pinnacle Incident has been Closed: then then update the ServiceNow incident state to resolved and the ServiceNow resolution code to Solved Remotely (Permanently)
         if (closeIncident == true) { 
-            newGR.state = 5;
+            newGR.state = 6;
             newGR.close_code = 'Solved Remotely (Permanently)';
         }
 
