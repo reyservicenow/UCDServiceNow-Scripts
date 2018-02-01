@@ -6,7 +6,8 @@
     var incID;
     var finalComment;
     var createdBy;
-	var preOrderNumber;
+    var preOrderNumber;
+    var workOrderNumber;
     var closeIncident = false;
 
     parseEmail(); //finds the sys_id for the desired incident
@@ -44,8 +45,11 @@
                 createdBy = emailBody[i].split("Created By:")[1].trim();
             } else if (emailBody[i].indexOf("Pinnacle Pre-Order Incident:") >= 0) { //look for pre-order #
                 preOrderNumber = emailBody[i].split("Pinnacle Pre-Order Incident:")[1].trim(); 
+            } else if (emailBody[i].indexOf("Pinnacle Incident:") >= 0) { //look for work order number
+                workOrderNumber = emailBody[i].split("Pinnacle Incident:")[1].trim(); 
             } else if (emailBody[i].indexOf("Pinnacle Incident has been Closed:") >= 0) {
                 closeIncident = true;
+                workOrderNumber = emailBody[i].split("Pinnacle Incident has been Closed:")[1].trim();
             }
         }
     }
@@ -56,6 +60,8 @@
         finalComment += "Incident number " + newGR.number;
         if (preOrderNumber) {
             finalComment += ", pre-order number " + preOrderNumber;
+        } else if (workOrderNumber) {
+            finalComment += ", work order number " + workOrderNumber;
         }
         finalComment += "\nMessage:\n" + emailRaw;
     }
