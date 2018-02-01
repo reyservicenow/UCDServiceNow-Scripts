@@ -1,6 +1,8 @@
 (function runAction(/*GlideRecord*/ current, /*GlideRecord*/ event, /*EmailWrapper*/ email, /*ScopedEmailLogger*/ logger, /*EmailClassifier*/ classifier) {
 
-    var emailBody = email.body_text.toString().split("\n");
+    var emailRaw = email.body_text.replace(/<(?:.|\n)*?>/gm, '\n');
+	emailRaw = emailRaw.replace(/&nbsp;/g,'');
+	var emailBody = emailRaw.toString().split("\n");
     var incID;
     var finalComment;
     var createdBy;
@@ -8,7 +10,7 @@
 
     parseEmail(); //finds the sys_id for the desired incident
 	
-	gs.log("Update Pinnacle Incident inbound action is updating:\nRunning Update Pinnacle Incident");
+	gs.log("Update Pinnacle Incident inbound action is updating:\nRunning Update Pinnacle Incident\n\n" + emailRaw);
 
     var newGR = new GlideRecord('incident'); //selects the desired incident
     newGR.addQuery('sys_id', incID);
@@ -45,10 +47,10 @@
         var now = new GlideDateTime();
         finalComment = "Message received from Pinnacle on " + now + " from " + createdBy + "\n";
         finalComment += "Incident number " + newGR.number;
-        if (newGR.u_external_system_number) {
+        if (preOrderNumber) {
             finalComment += ", pre-order number " + preOrderNumber;
         }
-        finalComment += "\nMessage:\n" + email.body_text;
+        finalComment += "\nMessage:\n" + emailRaw;
     }
 
 })(current, event, email, logger, classifier); 
