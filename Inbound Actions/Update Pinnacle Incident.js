@@ -42,9 +42,9 @@
             if (!newGR.subcategory) newGR.subcategory = 'new'; //new
             if (!newGR.cmdb_ci) newGR.cmdb_ci = 'c21bf7f96fd38100091f52a03f3ee45e'; // pinnacle
             if (!newGR.assigned_to && assignedTo) { //assigned_to is the Assigned to in the email
-                getPinnacleAssignee(assignedTo);
+                newGR.assigned_to = getPinnacleAssignee(assignedTo);
             } else if (!newGR.assigned_to && resolvedBy) { //assigned_to is the Resolved by in the email
-                getPinnacleAssignee(resolvedBy);
+                newGR.assigned_to = getPinnacleAssignee(resolvedBy);
             }
         }
 
