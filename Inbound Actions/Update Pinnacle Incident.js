@@ -10,6 +10,8 @@
     var preOrderNumber;
     var workOrderNumber;
     var closeIncident = false;
+    var assignedTo;
+    var resolvedBy;
 
     parseEmail(); //parses the email to find relevant information
 	
@@ -32,10 +34,18 @@
             newGR.comments += finalComment;
         }
 
-        //if in the email it said Pinnacle Incident has been Closed: then then update the ServiceNow incident state to resolved and the ServiceNow resolution code to Solved Remotely (Permanently)
+        //if in the email it said Pinnacle Incident has been Closed: then then update the ServiceNow incident as noted below
         if (closeIncident == true) { 
-            newGR.state = 6;
-            newGR.close_code = 'Solved Remotely (Permanently)';
+            newGR.state = 6; //resolved
+            newGR.close_code = 'Solved Remotely (Permanently)'; //solved remotely (permanently)
+            if (!newGR.category) newGR.category = 'request'; //request
+            if (!newGR.subcategory) newGR.subcategory = 'new'; //new
+            if (!newGR.cmdb_ci) newGR.cmdb_ci = 'c21bf7f96fd38100091f52a03f3ee45e'; // pinnacle
+            if (!newGR.assigned_to && assignedTo) { //assigned_to is the Assigned to in the email
+                getPinnacleAssignee(assignedTo);
+            } else if (!newGR.assigned_to && resolvedBy) { //assigned_to is the Resolved by in the email
+                getPinnacleAssignee(resolvedBy);
+            }
         }
 
         newGR.update();
@@ -59,6 +69,10 @@
                 workOrderNumber = emailBody[i].split(":")[1].trim(); 
             } else if (emailBody[i].indexOf("Pinnacle has been Closed.") >= 0) { //look for Pinnacle has been Closed: to see if this is a closure notification
                 closeIncident = true;
+            } else if (emailBody[i].indexOf("Assigned To:") >= 0) {
+                assignedTo = emailBody[i].split(":")[1].trim();
+            } else if (emailBody[i].indexOf("Resolved By:") >= 0) {
+                resolvedBy = emailBody[i].split(":")[1].trim();
             }
         }
     }
@@ -73,6 +87,15 @@
             finalComment += ", work order number " + workOrderNumber;
         }
         finalComment += "\n" + emailRaw; //post the entire email body
+    }
+
+    //figure out who the assigned_to field should be in servicenow based on the email
+    function getPinnacleAssignee(pinnacleUserName) {
+        var usernameGR = new GlideRecord('sys_user');
+        usernameGR.addQuery('user_name', pinnacleUserName);
+        usernameGR.query();
+        usernameGR.next();
+        return usernameGR.sys_id;
     }
 
 })(current, event, email, logger, classifier); 
