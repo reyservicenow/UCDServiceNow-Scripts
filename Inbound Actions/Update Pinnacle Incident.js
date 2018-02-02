@@ -54,7 +54,7 @@
         sys_email.target_table = 'incident';
         sys_email.instance = newGR.sys_id;
 
-        gs.log("Update Pinnacle Incident inbound action is updating: " + newGR.number);
+        gs.log("Update Pinnacle Incident inbound action is updating: " + newGR.number + "\nincID: " + incID + "\ncreatedBy: " + createdBy + "\npreOrderNumber: " + preOrderNumber + "\nworkOrderNumber: " + workOrderNumber + "\ncloseIncident: " + closeIncident + "\nassignedTo: " + assignedTo + "\nresolvedBy: " + resolvedBy);
     }
 
     function parseEmail() {
