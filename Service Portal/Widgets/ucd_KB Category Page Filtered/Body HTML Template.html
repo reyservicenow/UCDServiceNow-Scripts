@@ -1,0 +1,56 @@
+<div class="panel o-box--large" id="art-list">
+    <h2 class="heading--weighted"><img class="heading-icon" ng-if="data.parentCatIcon" ng-src="{{::data.parentCatIcon}}" alt=""><span class="heading--weighted--weighted">{{::data.categoryDisplay}}</span> Articles</h2>
+    <p ng-if="data.isParentCatDisplay">{{data.categoryDescription}}<p>
+    <p ng-if="data.isSubcatDisplay">{{data.subCategoryDisplay}}<p>
+    <p ng-if="data.isSubcatcatDisplay">{{data.subcatcatDisplay}}<p>
+        <section class="u-space-bottom">
+            <div ng-if="data.items.length == 0">
+                (${No articles})
+            </div>
+            <ul id="articles_list" class="list--arrow list--flush" ng-repeat="kb_article in data.items | limitTo: !viewAll ? 50 : data.items.length">
+                <li> 	<a ng-href="?id={{::data.articlePageUrl}}&sys_id={{::kb_article.sys_id}}">{{::kb_article.short_description}}</a> </li>
+            </ul>
+        </section>
+        <button ng-show="!viewAll && data.items.length > 50" ng-click="viewAll = !viewAll" class="btn btn-primary">View All</button>
+</div>
+<!--
+<div>
+  <div ng-if="!data.has_subs">
+    <div ng-if="data.categoryExists" class="panel panel-{{::options.color}} b">
+        <div class="panel-heading">
+        <h4 class="panel-title">${{{data.categoryDisplay}} Articles}</h4>
+        </div>
+            <!-- Main Parent category display
+        <div class="panel-body">
+        <div ng-if="data.items.length == 0">
+            (${No articles})
+        </div>
+        <div ng-repeat="kb_article in data.items | limitTo: !viewAll ? 30 : data.items.length" class="sp-kb-topic-article m-b-lg">
+            <h4>
+            <a ng-href="?id={{::data.articlePageUrl}}&sys_id={{::kb_article.sys_id}}">{{::kb_article.short_description}}</a>
+            </h4>
+        </div>
+        </div>
+      <div class="panel-footer">
+          <button ng-show="!viewAll && data.items.length > 30" ng-click="viewAll = !viewAll" class="btn btn-primary">View All</button>
+        </div>
+    </div>
+  </div>
+    <div ng-if="data.has_subs" class="panel panel-{{::options.color}} b">
+        <div class="panel-heading">
+        <h4 class="panel-title"> ${{{data.categoryDisplay}} Articles} </h4>
+      </div>
+      <div class="panel-body">
+        <div ng-if="data.items.length == 0">
+          (${No Articles})
+        </div>
+        <div ng-repeat="kb_article in data.items | limitTo: !viewAll ? 30 : data.items.length" class="sp-kb-topic-article m-b-lg">
+          <h4> <a ng-href="?id={{::data.articlePageUrl}}&sys_id={{::kb_article.sys_id}}">{{::kb_article.short_description}}</a></h4>
+       </div>
+        </div>
+        <div class="panel-footer">
+          <button ng-show="!viewAll && data.items.length > 30" ng-click="viewAll = !viewAll" class="btn btn-primary">View All</button>
+        </div>
+   </div>
+ </div>
+-->

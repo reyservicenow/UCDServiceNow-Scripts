@@ -1,0 +1,62 @@
+ul.dropdown-menu {
+    min-width: 100%;
+    border-radius: 0px 0px 4px 4px;
+    margin: 0px;
+}
+
+    ul.dropdown-menu a.ta-item {
+        line-height: 20px;
+    }
+
+    ul.dropdown-menu i.ta-icon, i.ta-img {
+        width: 20px;
+        height: 20px;
+        background-size: contain;
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-position: center center;
+        text-align: center;
+        line-height: 20px;
+        float: left;
+        margin-right: 8px;
+    }
+
+input[name="q"] {
+    color: black;
+}
+
+.home-search {
+    margin-bottom: 20px;
+    .form-control
+
+{
+    border: 1;
+    border-radius: 0;
+    display: block;
+    width: 100%;
+    height: 36px;
+    font-size: 14px;
+    box-shadow: none;
+}
+
+.input-group-btn {
+}
+
+.btn {
+    width: auto;
+    height: auto;
+    border: 1;
+    background-color: #fff;
+    &:hover
+
+{
+    background-color: #4d6988;
+    border-radius: 0;
+}
+
+}
+
+.sp-tagline-color {
+    color: $sp-tagline-color;
+}
+}

@@ -1,0 +1,61 @@
+<div class="l-main" role="main">
+    <div class="l-content">
+        <div class="panel o-box--large">
+
+            <div class="o-media ">
+                <div class="o-media__figure">
+                    <img src="GetAnswers.png" width=40 height=40 />
+                </div>
+                <div class="o-media__body">
+                    <section class="u-space-bottom">
+                        <h2><span class="heading--weighted--weighted" style="color: #70c395; font-size: 3rem">Applicant Knowledge Base</span></h2>
+                    </section>
+                    <p>Welcome to the Applicant Knowledge Base, a repository of articles, how-to instructions, and troubleshooting guidelines for using technology services at UC Davis.</p>
+                    <sp-widget widget=data.widget></sp-widget>
+                </div>
+            </div>
+            <!--
+            <div class="custom-cat-grid three-col-grid">
+                <div class="three-col-grid__item" ng-repeat="category in c.data.categories">
+                    <div class="o-media ">
+                        <div class="o-media__figure">
+                            <a ng-href="?id={{c.data.categoryPageUrl}}&kb_category={{::category.value}}">
+                                <img src="{{category.icon}}" />
+                            </a>
+                        </div>
+                        <div class="o-media__body">
+                            <h2><a ng-href="?id={{c.data.categoryPageUrl}}&kb_category={{category.value}}&kb={{data.kb}}">{{category.label}}</a></h2>
+                            <p>{{category.desc}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                -->
+
+            <div ng-repeat="category in c.data.categories">
+                <h2 class="heading--weighted"><p>{{category.label}}</p></h2>
+                <p>
+                    <div ng-repeat="kb_article in c.data.documents">
+                        <div ng-if="kb_article.kb_category == category.value">
+                            <ul class="list--arrow list--flush">
+                                <li><a ng-href="?id={{::data.articlePageUrl}}&sys_id={{::kb_article.sys_id}}">{{kb_article.short_description}}</a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </p>
+            </div>
+
+            <div ng-if="data.categories.length < 1">${The selected Knowledge Base has no categories}</div>
+        </div>
+
+        <!--<div class="panel panel-{{::c.options.color}} b">
+          <div class="panel-heading">
+            <h4 class="panel-title" ng-bind="::c.options.title"><fa ng-if="c.options.glyph" name="{{c.options.glyph}}" /></h4>
+          </div>
+          <div class="panel-body">
+            <div ng-repeat="category in c.data.categories">
+              <a ng-href="?id={{c.data.categoryPageUrl}}&kb_category={{::category.value}}">{{::category.label}}</a>
+            </div>
+          </div>
+        </div>-->

@@ -1,0 +1,22 @@
+<form ng-submit="c.submitSearch()">
+    <!--<form method="get" action="?">
+      <input type="hidden" name="id" value="ucd_search2"/>-->
+    <!--<input type="hidden" name="t" value="{{data.searchType}}"/>-->
+    <div class="input-group input-group-{{::c.options.size}} home-search">
+        <!-- uses ui.bootstrap.typeahead -->
+        <!--<input name="q" type="text" placeholder="{{::c.data.searchMsg}}" ng-model="c.selectedState"-->
+        <input name="query" type="text" placeholder="{{::c.data.searchMsg}}" ng-model="c.selectedState"
+               ng-model-options="{debounce: 250}" autocomplete="off"
+               uib-typeahead="item as item.label for item in c.getResults($viewValue)"
+               typeahead-focus-first="false"
+               typeahead-on-select="c.onSelect($item, $model, $label)"
+               typeahead-template-url="ucd-typeahead2.html" class="form-control input-typeahead"
+               aria-label="{{::c.options.title}}" tabindex="0"
+               required>
+        <span class="input-group-btn">
+            <button name="search" type="submit" class="btn btn-{{::c.options.color}}" aria-label="Submit {{::c.options.title}}">
+                <i ng-if="::c.options.glyph" class="fa fa-{{::c.options.glyph}}"></i>
+            </button>
+        </span>
+    </div>
+</form>
