@@ -27,22 +27,30 @@ var userID;					//addUserToGroups		- user's sys_id
 var userLogin; 				//parseEmail 			- nexisn4
 var userEmail;				//addUserToGroups		- user's email
 var groupsToAdd = [];		//parseEmail 			- [g1, g2, ...]
-var ritm;					//parseEmail 			- RITMxxxxx
+var groupsToAddNames = [];  //parseEmail            - [gname1, gname2, ...]
+var ritm;					//parseEmail 			- RITM sys_id
+var ritmNum;                //parseEmail            - RITMxxxxx
 var primaryContact;			//addInboundEmailToRitm - PC
 var primaryContactEmail;	//getPCEmail			- PC email
+var completionTime;         //parseEmail            - completion time
+var completionDate;         //parseEmail            - completion date
+var summary;                //parseEmail            - user login and score
 
 
 parseEmail();
+getGroupsToAdd();
 addInboundEmailToRitm();
 removeDuplicates();
 addUserToGroups();
 updateBillTo();
 emailUser();
 getPCEmail();
-emailPC();
+//emailPC();
 gs.log("INBOUND ACTION\nend of script");
 
-
+/**
+* Emails primary contact that user has been added
+*/
 function emailPC() {
     var emailNotification = new GlideRecord("sys_email");
     emailNotification.initialize();
@@ -52,11 +60,11 @@ function emailPC() {
     var bodyStr =
 
         '<p>'
-        + 'Per your request ' + ritm + ', ServiceNow access for ' + userName + ' has been modified.<br><br>'
+        + 'Per your request ' + ritmNum + ', ServiceNow access for ' + userName + ' has been modified.<br><br>'
         + userName + ' has been added to the following group(s):<br>';
 
-    for (var i = 0; i < groupsToAdd.length; i++) {
-        bodyStr += groupsToAdd[i] + '<br>';
+    for (var i = 0; i < groupsToAddNames.length; i++) {
+        bodyStr += groupsToAddNames[i] + '<br>';
     }
     bodyStr += '<br>';
 
@@ -72,7 +80,9 @@ function emailPC() {
 }
 
 
-
+/**
+* Gets primary contact's email
+*/
 function getPCEmail() {
     var gr = new GlideRecord("sys_user");
     //got pc
@@ -85,11 +95,34 @@ function getPCEmail() {
     }
 }
 
+/**
+* Gets groups to add user to
+*/
+function getGroupsToAdd() {
+    var ritmRec = new GlideRecord('sc_req_item');
+    if (ritmRec.get('sys_id', ritm)) {
+        var groups = ritmRec.variables.u_groups.getValue().split(',');
+        for (var i = 0; i < groups.length; i++) {
+            groupsToAdd.push(groups[i].trim());
+        }
+        // get display values of assignment groups
+        for (var j = 0; j < groupsToAdd.length; j++) {
+            // get group record
+            var agRec = new GlideRecord('sys_user_group');
+            if (agRec.get('sys_id', groupsToAdd[j])) {
+                groupsToAddNames.push(agRec.name);
+            }
+        }
+    }
+}
 
+/**
+* Adds inbound email to RITM from Qualtrics
+*/
 function addInboundEmailToRitm() {
     //get ritm -> get pc -> get pc's email
     var gr = new GlideRecord("sc_req_item");
-    gr.addQuery("number", ritm);
+    gr.addQuery("sys_id", ritm);
     gr.query();
 
     //got ritm
@@ -99,21 +132,34 @@ function addInboundEmailToRitm() {
         var inbound =
             "Inbound email from Qualtrics:\n\n"
             + "Body:\n" +
-            "[code]"
-            + email.body_html +
-            "[/code]";
+            summary + "\n\n"
+            + completionDate + "\n"
+            + completionTime + "\n\n"
+            + "RITM=" + ritmNum + "\n\n";
+
+        // add assignment group names
+        for (var i = 0; i < groupsToAddNames.length; i++) {
+            inbound += "Assignment Group " + (i + 1) + "=" + groupsToAddNames[i] + "\n";
+        }
+		/*var inbound =
+			"Inbound email from Qualtrics:\n\n"
+			+ "Body:\n" + 
+			"[code]"
+				 + email.body_html +
+			"[/code]";*/
 
         gr.comments = inbound;
         gr.update();
 
         primaryContact = gr.u_primary_contact.getDisplayValue();
+        gs.log("INBOUND ACTION\nend of addInboundEmailToRitm()\n"
+            + ritm + "\n" + inbound + "\n" + primaryContact);
     }
-
-    gs.log("INBOUND ACTION\nend of addInboundEmailToRitm()\n"
-        + ritm + "\n" + inbound + "\n" + primaryContact);
 }
 
-
+/**
+* Email user that access to ServiceNow has been granted
+*/
 function emailUser() {
     //send email to user that they have been added
     var emailNotification = new GlideRecord("sys_email");
@@ -136,10 +182,12 @@ function emailUser() {
     emailNotification.insert();
 }
 
-
+/**
+* Update user's bill to field to be parent organization
+*/
 function updateBillTo() {
     //get the name of the group and try 1, 12, 123 ... words to find parent org
-    var group = groupsToAdd[0];
+    var group = groupsToAddNames[0];
     var new_parent = "";
     for (var i = 1; i <= group.split(" ").length; i++) {
         var str = group.split(" ").slice(0, i).join(" ");
@@ -167,9 +215,9 @@ function updateBillTo() {
     }
 }
 
-
-
-
+/**
+* Adds the user to the groups from RITM
+*/
 function addUserToGroups() {
     //query the user
     var user_record = new GlideRecord("sys_user");
@@ -209,40 +257,51 @@ function addUserToGroups() {
     }
 }
 
-
+/**
+* Removes duplicate values in an array
+*/
 function removeDuplicates() {
     var arrayUtil = new ArrayUtil();
     groupsToAdd = arrayUtil.unique(groupsToAdd);
 }
 
-
+/**
+* Reads received email and stores selected information as variables
+*/
 function parseEmail() {
     for (var i = 0; i < emailBody.length; i++) {
         //if line contains the user's name
         if (emailBody[i].indexOf("has completed") >= 0) {
             userLogin = emailBody[i].split("has")[0].trim();
+            summary = emailBody[i].trim();
         }
 
         //if line contains ritm number
         else if (emailBody[i].indexOf("RITM") >= 0) {
             //ritm = emailBody[i].trim().split("=")[1];
             ritm = emailBody[i].split("=")[1].trim();
+            // get ritm number
+            var ritmGr = new GlideRecord('sc_req_item');
+            if (ritmGr.get('sys_id', ritm))
+                ritmNum = ritmGr.number;
+            else ritmNum = "Could not find RITM record";
         }
 
-        //line contains the group
-        else if (emailBody[i].indexOf("Assignment Group") === 0) {
-            var line = emailBody[i].trim();
-            var line2 = line.split("=");
+        //line contains completion time
+        else if (emailBody[i].indexOf("Completion Time") >= 0) {
+            completionTime = emailBody[i].trim();
+        }
 
-            //if rhs of equal sign is not empty (there is group)
-            if (line2[1].length > 0) {
-                groupsToAdd.push(line2[1].trim());
-            }
+        // line contains completion date
+        else if (emailBody[i].indexOf("Completion Date") >= 0) {
+            completionDate = emailBody[i].trim();
         }
     }
 }
 
-
+/**
+* Creates link
+*/
 function makeLinkString(url, label) {
     //url = "https://www.google.com"
     //label = <a href=LINK>LABEL HERE</a>
