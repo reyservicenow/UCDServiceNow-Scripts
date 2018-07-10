@@ -1,4 +1,4 @@
-//Call this script include via the URL parameter including a referenced RITM's sys_id and it will return all the variables of that ritm.
+//Call this script_include and make sure that the URL incldues the sysparm_ritm parameter (set to a RITM's sys_id) and it will return all the variables of that ritm.
 
 var ritm_variable_collector = Class.create();
 ritm_variable_collector.prototype = Object.extendsObject(AbstractAjaxProcessor, {

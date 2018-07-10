@@ -44,6 +44,9 @@
         }
     }
 
+    //and the ticket's assignee
+    if (current.task.assigned_to && current.sla.u_ticket_assignee_25) addUser(current.task.assigned_to);
+
     //remove duplicates from array
     var arrayUtil = new ArrayUtil();
     var userIDsArr = userIDs.split(',');
