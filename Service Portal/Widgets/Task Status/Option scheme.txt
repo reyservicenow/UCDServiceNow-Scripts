@@ -1,1 +1,0 @@
-[{"displayValue":"Table","name":"table","section":"other","default_value":"task","label":"Table","type":"reference","value":"sys_db_object","ed":{"reference":"sys_db_object"}},{"name":"encoded_query","section":"other","default_value":"active=true","label":"Encoded Query","type":"string"}]
