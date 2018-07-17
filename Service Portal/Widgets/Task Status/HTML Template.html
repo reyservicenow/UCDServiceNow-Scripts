@@ -1,22 +1,27 @@
-﻿<table>
+﻿<div>
+  <table>
     <tr>
-        <th>Number - Short Description</th>
-        <th ng-repeat="state in data.state_columns">{{state}}</th>
+      <th>Number - Short Description</th>
+      <th ng-repeat="state in data.state_columns">{{state}}</th>
     </tr>
     <tr ng-repeat="record in data.records">
-        <td>
-            {{record.number}} - {{record.short_description}}
-        </td>
-        <td ng-repeat="state in data.state_array">
-            <ng-container ng-if="record.state == state">
-                ⚫
-            </ng-container>
-            <ng-container ng-if="record.state > state">
-                ✔
-            </ng-container>
-            <ng-container ng-if="record.state < state">
-                ○
-            </ng-container>
-        </td>
+      <td>
+        {{record.number}} - {{record.short_description}}
+      </td>
+      <td ng-repeat="state in data.state_array">
+        <ng-container ng-if="record.state == state">
+          ⚫
+        </ng-container>
+        <ng-container ng-if="record.state > state">
+          ✔
+        </ng-container>
+        <ng-container ng-if="record.state < state">
+          ○
+        </ng-container>
+      </td>
     </tr>
-</table>
+  </table>
+  <ng-container ng-if="data.limit_reached">
+    Results limited to first 100 records.
+  </ng-container>
+</div>

@@ -1,11 +1,21 @@
-table {
-    border-collapse: collapse;
-    width: 100%;
-    //background-color: #FFF;
+div {
+  background-color: white;
+  border: 25px solid white;
+  border-radius: 5px;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin: 25px;
+  margin-bottom: 20px;
 }
 
-table, th, td {
-    border: 0px solid black;
-    padding: 2px;
-    border-bottom: 1px solid black;
+table {
+  border-collapse: separate;
+  width: 100%;
+}
+
+th, td {
+  border: 0px solid black;
+  padding: 2px;
+  border-bottom: 1px solid black;
+  width: 40px;
 }
