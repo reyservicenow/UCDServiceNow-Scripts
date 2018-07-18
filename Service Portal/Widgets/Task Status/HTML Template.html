@@ -23,10 +23,10 @@
       </td>
     </tr>
   </table>
-    <ng-container ng-if="data.limit_reached" class="footer">
+    <ng-container ng-if="data.limit_reached" class="footerquery">
       {{data.tooltip}} Results limited to first 100 records.
     </ng-container>
-    <ng-container ng-if="!data.limit_reached" class="footer">
+    <ng-container ng-if="!data.limit_reached" class="footerquery">
       {{data.tooltip}} Found {{data.record_count}} records.
     </ng-container>
 </div>
