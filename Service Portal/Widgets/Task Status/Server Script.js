@@ -12,16 +12,26 @@
 
 	//check to see if an encoded query was provided
 	var encoded_query = $sp.getParameter('query') || options.encoded_query;
+	data.tooltip = 'Searching ' + table_name + ' with query: ' + encoded_query+'.';//temp
 
 	//retrieve records according to the widget options query
 	var gr = new GlideRecord(table_name);
-	gr.addEncodedQuery(encoded_query);
+	if ($sp.getParameter('table') && ! $sp.getParameter('query')){
+		data.tooltip = 'Searching ' + table_name + '.';//temp
+	} else {
+		gr.addEncodedQuery(encoded_query);
+	}
 	gr.orderByDesc('number');
 	gr.setLimit(100);
 	gr.query();
+	data.option1 = gr.getRowCount(); //temp
 
 	//if the limit was reached
-	if (gr.getRowCount() == 100) data.limit_reached = 'true';
+	if (gr.getRowCount() == 100) {
+		data.limit_reached = 'true';
+	} else {
+		data.record_count = gr.getRowCount();
+	}
 
 	//declare objects
 	data.records = [];

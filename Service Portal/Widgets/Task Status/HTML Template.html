@@ -1,7 +1,9 @@
-﻿<div>
+﻿<div class="widget">
   <table>
     <tr>
-      <th>Number - Short Description</th>
+      <th>
+        Record
+      </th>
       <th ng-repeat="state in data.state_columns">{{state}}</th>
     </tr>
     <tr ng-repeat="record in data.records">
@@ -13,7 +15,7 @@
           ⚫
         </ng-container>
         <ng-container ng-if="record.state > state">
-          ✔
+          ○
         </ng-container>
         <ng-container ng-if="record.state < state">
           ○
@@ -21,7 +23,10 @@
       </td>
     </tr>
   </table>
-  <ng-container ng-if="data.limit_reached">
-    Results limited to first 100 records.
-  </ng-container>
+    <ng-container ng-if="data.limit_reached" class="footer">
+      {{data.tooltip}} Results limited to first 100 records.
+    </ng-container>
+    <ng-container ng-if="!data.limit_reached" class="footer">
+      {{data.tooltip}} Found {{data.record_count}} records.
+    </ng-container>
 </div>

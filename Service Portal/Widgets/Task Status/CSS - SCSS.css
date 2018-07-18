@@ -1,4 +1,4 @@
-div {
+.widget {
   background-color: white;
   border: 25px solid white;
   border-radius: 5px;
@@ -18,4 +18,9 @@ th, td {
   padding: 2px;
   border-bottom: 1px solid black;
   width: 40px;
+}
+
+.footer {
+  color: #BBB;
+  background: transparent;
 }
